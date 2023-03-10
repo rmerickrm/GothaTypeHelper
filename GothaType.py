@@ -22,7 +22,7 @@ texto_listado = list()
 def leer_documento(mi_documento):
     """
     Recibe un documento por parámetro y llena una lista con todos sus párrafos no vacíos.
-    :param mi_documento: Nombre del documento a abrir.
+    :param mi_documento: Nombre del documento a abrir..
     """
     print(mi_documento)
     global texto_listado
