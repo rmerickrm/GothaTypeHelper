@@ -73,6 +73,9 @@ def leer_elementos():
         if largo_texto > 1 and texto_listado[i][0] == "*" and texto_listado[i][largo_texto - 1] == "*":
             texto = texto_listado[i][1:largo_texto - 1]
             cuadro_texto.configure(foreground="#600000")
+        elif largo_texto > 1 and texto_listado[i][0] == "*":
+            texto = texto_listado[i][1:largo_texto]
+            cuadro_texto.configure(foreground="#600000")
         else:
             texto = texto_listado[i]
             cuadro_texto.configure(foreground="black")
@@ -172,8 +175,10 @@ args = parser.parse_args()
 
 # Obtiene el nombre del archivo ingresado por el usuario
 if args.archivo:
+    print("hay documento")
     leer_documento(args.archivo)
 else:
+    print("NOO hay documento")
     no_documento()
 
 #-------------------------------------------------------------------------------------------------------
