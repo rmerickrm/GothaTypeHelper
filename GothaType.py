@@ -9,6 +9,7 @@ import argparse         #recepción de parámetros
 
 # Globales
 i = 0
+texto_subdividido = list()
 total_parrafos = 0
 texto_listado = list()
 
@@ -62,29 +63,63 @@ def leer_elementos():
     """
     global i
     largo_lista = len(texto_listado)
-    # Mejor prevenir aunque nunca debería ser cierto
-    if i < largo_lista:
-        texto = cuadro_texto.get("1.0", "end")
+    # Mejor prevenir aunque nunca debería ser cierto además se asegura que se haya copiado todo el texto subdividido
+    if i < largo_lista and not texto_subdividido:
         cuadro_texto.delete("1.0", "end")
         if mayusculas.get() == 1:
             texto_listado[i] = texto_listado[i].upper()
-        largo_texto = len(texto_listado[i])
         cuadro_texto.insert("1.0", texto_listado[i])
-        if largo_texto > 1 and texto_listado[i][0] == "*" and texto_listado[i][largo_texto - 1] == "*":
-            texto = texto_listado[i][1:largo_texto - 1]
-            cuadro_texto.configure(foreground="#600000")
-        elif largo_texto > 1 and texto_listado[i][0] == "*":
-            texto = texto_listado[i][1:largo_texto]
-            cuadro_texto.configure(foreground="#600000")
-        else:
-            texto = texto_listado[i]
-            cuadro_texto.configure(foreground="black")
-        pyperclip.copy(texto)
+        texto = texto_flotante()
+        #subdivide el texto separado por //
+        subdividir(texto)
         mostrar_posicion(i)
         # Posición del siguiente texto
         if i + 1 < largo_lista:
             i = i + 1
             progreso(i)
+    pyperclip.copy(texto_subdividido.pop(0))
+
+def subdividir(texto):
+    """
+    separa el texto delimitado por los símbolos '//' y lo añade a una lista global
+    """
+    global texto_subdividido
+    if len(texto_subdividido) == 0:
+        indice_inicial = 0
+        indice_final   = -1
+
+        anterior = 'x'
+        for c in texto:
+            if c == anterior and c=='/':
+                if indice_inicial<indice_final:
+                    texto_subdividido.append(texto[indice_inicial:indice_final])
+                    indice_inicial = indice_final + 2
+            anterior=c
+            indice_final = indice_final + 1
+        if texto_subdividido:
+            cuadro_texto.configure(foreground="#000060")
+        indice_final = indice_final + 1
+        if indice_inicial<indice_final:
+            texto_subdividido.append(texto[indice_inicial:indice_final])
+
+def texto_flotante():
+    """
+    Comprueba si un texto es flotante y en caso de serlo ignora los caracteres que lo señalan y cambia el color de texto para que no pase desapercibido
+    return El texto correspondiente al diálogo.
+    """
+    global i
+    largo_texto = len(texto_listado[i])
+    if largo_texto > 1 and texto_listado[i][0] == "*" and texto_listado[i][largo_texto - 1] == "*":
+        texto = texto_listado[i][1:largo_texto - 1]
+        cuadro_texto.configure(foreground="#600000")
+    elif largo_texto > 1 and texto_listado[i][0] == "*":
+        texto = texto_listado[i][1:largo_texto]
+        cuadro_texto.configure(foreground="#600000")
+    else:
+        texto = texto_listado[i]
+        cuadro_texto.configure(foreground="black")
+    return texto
+    
 
 
 def anterior():
